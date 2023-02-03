@@ -1,0 +1,16 @@
+[package]
+name = "libregexp-sys"
+version = "0.0.1"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/hyf0/libregexp-sys"
+
+links = "libregexp"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.63.0"
+cc = "1.0.79"
