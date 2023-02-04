@@ -2,6 +2,11 @@ use std::ffi::{c_char, c_int, c_uchar};
 
 use libregexp_sys::{lre_compile, lre_exec};
 
+
+const ERROR_MSG_LEN: usize = 64;
+
+
+
 fn main() {
     let args = std::env::args().into_iter().collect::<Vec<_>>();
     println!("args: {:?}", args);
@@ -15,7 +20,7 @@ fn main() {
     let ret: c_int;
     let i: c_int;
     let bc: *const c_uchar;
-    let mut error_msg = [0 as c_char; 64];
+    let mut error_msg = [0 as c_char; ERROR_MSG_LEN];
     let mut capture = [0 as c_uchar; 410];
     let input: *const c_char;
     let input_len;
