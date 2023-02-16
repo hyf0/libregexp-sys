@@ -47,6 +47,8 @@ fn main() {
         .file(quickjs_dir.join("libunicode.c"))
         .file(quickjs_dir.join("cutils.c"))
         .file(root_dir.join("shims.c"))
+        .warnings(false)
+        .opt_level(2)
         .compile("libregexp");
 
     // The bindgen::Builder is the main entry point

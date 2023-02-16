@@ -16,9 +16,9 @@ fn main() {
         return;
     }
 
-    let len: c_int;
+    let _len: c_int;
     let ret: c_int;
-    let i: c_int;
+    let _i: c_int;
     let bc: *const c_uchar;
     let mut error_msg = [0 as c_char; ERROR_MSG_LEN];
     let mut capture = [0 as c_uchar; 410];
