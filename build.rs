@@ -1,6 +1,6 @@
 extern crate bindgen;
 
-use std::env::{self, args};
+use std::env::{self};
 use std::path::PathBuf;
 
 use bindgen::CargoCallbacks;
@@ -11,37 +11,24 @@ fn main() {
     );
     let quickjs_dir = root_dir.join("quickjs");
 
-    let libregexp_header = quickjs_dir.join("libregexp.h");
-    let libunicode_header = quickjs_dir.join("libunicode.h");
-    let cutils_header = quickjs_dir.join("cutils.h");
-
-    let cwd = PathBuf::from(
-        &std::env::var("CARGO_MANIFEST_DIR").expect("Should have CARGO_MANIFEST_DIR"),
-    );
-
-    // // Tell cargo to look for shared libraries in the specified directory
-    // println!("cargo:rustc-link-search={}", quickjs_dir.to_str().unwrap());
-
     // Tell cargo to tell rustc to link our `hello` library. Cargo will
     // automatically know it must look for a `libhello.a` file.
     println!("cargo:rustc-link-lib=libregexp");
 
+    // Rebuild if any of these files change
     [
         quickjs_dir.join("libregexp.c"),
         quickjs_dir.join("libunicode.c"),
         quickjs_dir.join("cutils.c"),
-        quickjs_dir.join("libregexp.h"),
-        quickjs_dir.join("libunicode.h"),
-        quickjs_dir.join("cutils.h"),
-        root_dir.join("shims.h"),
+        root_dir.join("shims.c"),
         root_dir.join("build.rs"),
     ]
     .into_iter()
     .for_each(|p| {
+        assert!(p.exists(), "File does not exist: {}", p.to_str().unwrap());
         println!("cargo:rerun-if-changed={}", p.to_str().unwrap());
     });
 
-    
     cc::Build::new()
         .file(quickjs_dir.join("libregexp.c"))
         .file(quickjs_dir.join("libunicode.c"))
@@ -57,9 +44,21 @@ fn main() {
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate
         // bindings for.
-        .header(libregexp_header.to_str().unwrap().to_string())
-        .header(libunicode_header.to_str().unwrap().to_string())
-        .header(cutils_header.to_str().unwrap().to_string())
+        .header(
+            quickjs_dir
+                .join("libregexp.h")
+                .to_str()
+                .unwrap()
+                .to_string(),
+        )
+        .header(
+            quickjs_dir
+                .join("libunicode.h")
+                .to_str()
+                .unwrap()
+                .to_string(),
+        )
+        .header(quickjs_dir.join("cutils.h").to_str().unwrap().to_string())
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(CargoCallbacks))
